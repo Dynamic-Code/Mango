@@ -14,6 +14,7 @@ namespace Mango.Web.Controllers
             _couponService = couponService;
         }
 
+        // fetcing all coupon
         public async Task<IActionResult> CouponIndex()
         {
             List<CouponDto>? list = new();
@@ -26,11 +27,13 @@ namespace Mango.Web.Controllers
             return View(list);
         }
 
+        // creating new coupon view 
         public async Task<IActionResult> CouponCreate()
         {
             return View();
         }
 
+        // creating new coupon http call
         [HttpPost]
         public async Task<IActionResult> CouponCreate(CouponDto couponDto)
         {
@@ -44,6 +47,32 @@ namespace Mango.Web.Controllers
                 }
             }
             return View(couponDto);
+        }
+
+        //deleting coupon view
+        public async Task<IActionResult> CouponDelete(int couponId)
+        {
+            ResponseDto? res = await _couponService.GetCouponByIdAsync(couponId);
+
+            if (res != null && res.IsSuccess)
+            {
+                CouponDto? model = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(res.Result));
+                return View(model);
+            }
+            return NotFound();
+        }
+
+        //delete action method
+        [HttpPost]
+        public async Task<IActionResult> CouponDelete(CouponDto couponDto)
+        {
+            ResponseDto? res = await _couponService.DeleteCouponAsync(couponDto.CouponId);
+
+            if (res != null && res.IsSuccess)
+            {
+                return RedirectToAction(nameof(CouponIndex));
+            }
+            return NotFound();
         }
     }
 }
