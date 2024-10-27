@@ -1,5 +1,6 @@
 using Mango.Services.AuthApi.Data;
 using Mango.Services.AuthApi.Models;
+using Mango.Services.AuthApi.Models.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,11 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// We created a JwtOptions class file which act as a model for jwt configs that are stored in appsettings.json
+// this is populate all the vales of Jwt section from appsettings
+// configure the class file and using DI we can access the settings  
+builder.Services.Configure<JwtOptions>(opt => builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
 // Added ApplicationUser to add name in Identity table 
 
