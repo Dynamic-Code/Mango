@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 // We created a JwtOptions class file which act as a model for jwt configs that are stored in appsettings.json
 // this is populate all the vales of Jwt section from appsettings
 // configure the class file and using DI we can access the settings  
-builder.Services.Configure<JwtOptions>(opt => builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
 // Added ApplicationUser to add name in Identity table 
 

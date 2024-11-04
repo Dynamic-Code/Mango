@@ -16,14 +16,17 @@ namespace Mango.Services.AuthApi.Service
         //To work with roles
 
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
         public AuthService(AppDbContext db,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IJwtTokenGenerator jwtTokenGenerator)
         {
             _db = db;
             _userManager = userManager;
             _roleManager = roleManager;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
         public async Task<LoginResponseDTO> Login(LoginRequestDTO loginRequestDTO)
         {
@@ -32,7 +35,7 @@ namespace Mango.Services.AuthApi.Service
             // this will do the hashing and check the password :)
             bool IsValid = await _userManager.CheckPasswordAsync(user, loginRequestDTO.Password);
 
-            if(user == null || IsValid == false)
+            if (user == null || IsValid == false)
             {
                 return new LoginResponseDTO()
                 {
@@ -40,8 +43,7 @@ namespace Mango.Services.AuthApi.Service
                     Token = "",
                 };
             }
-            //Add JWT Token
-
+            var token = _jwtTokenGenerator.GenerateToken(user);
             UserDTO userDTO = new UserDTO()
             {
                 Email = user.Email,
@@ -53,7 +55,7 @@ namespace Mango.Services.AuthApi.Service
             LoginResponseDTO loginResponseDTO = new()
             {
                 User = userDTO,
-                Token = ""
+                Token = token
             };
             return loginResponseDTO;
         }
